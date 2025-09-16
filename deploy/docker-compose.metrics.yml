@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.8
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    environment:
+      CLICKHOUSE_DB: ${CLICKHOUSE_DATABASE:-otel}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USERNAME:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  prometheus:
+    image: prom/prometheus:v2.49.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.93.0
+    depends_on:
+      clickhouse:
+        condition: service_started
+      prometheus:
+        condition: service_started
+    volumes:
+      - ../otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
+    command: ["--config=/etc/otelcol/config.yaml"]
+    environment:
+      OTEL_COLLECTOR_OTLP_GRPC_ENDPOINT: ${OTEL_COLLECTOR_OTLP_GRPC_ENDPOINT:-0.0.0.0:4317}
+      OTEL_COLLECTOR_OTLP_HTTP_ENDPOINT: ${OTEL_COLLECTOR_OTLP_HTTP_ENDPOINT:-0.0.0.0:4318}
+      OTEL_PROMETHEUS_EXPORTER_ENDPOINT: ${OTEL_PROMETHEUS_EXPORTER_ENDPOINT:-0.0.0.0:9464}
+      OTEL_PROMETHEUS_NAMESPACE: ${OTEL_PROMETHEUS_NAMESPACE:-opobserve}
+      CLICKHOUSE_ENDPOINT: ${CLICKHOUSE_ENDPOINT:-tcp://clickhouse:9000}
+      CLICKHOUSE_DATABASE: ${CLICKHOUSE_DATABASE:-otel}
+      CLICKHOUSE_USERNAME: ${CLICKHOUSE_USERNAME:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_TTL_DAYS: ${CLICKHOUSE_TTL_DAYS:-3}
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "9464:9464"
+      - "13133:13133"
+      - "1777:1777"
+
+networks:
+  default:
+    name: op-observe-telemetry

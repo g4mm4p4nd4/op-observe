@@ -1,0 +1,47 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: ${OTEL_COLLECTOR_OTLP_GRPC_ENDPOINT}
+      http:
+        endpoint: ${OTEL_COLLECTOR_OTLP_HTTP_ENDPOINT}
+
+processors:
+  memory_limiter:
+    check_interval: 2s
+    limit_mib: ${OTEL_MEMORY_LIMIT_MIB:512}
+    spike_limit_mib: ${OTEL_MEMORY_SPIKE_LIMIT_MIB:128}
+  batch:
+    send_batch_size: 512
+    timeout: 2s
+
+exporters:
+  logging:
+    verbosity: detailed
+  prometheus:
+    endpoint: ${OTEL_PROMETHEUS_EXPORTER_ENDPOINT}
+    namespace: ${OTEL_PROMETHEUS_NAMESPACE:opobserve}
+  clickhouse:
+    endpoint: ${CLICKHOUSE_ENDPOINT}
+    database: ${CLICKHOUSE_DATABASE}
+    username: ${CLICKHOUSE_USERNAME}
+    password: ${CLICKHOUSE_PASSWORD}
+    ttl_days: ${CLICKHOUSE_TTL_DAYS:3}
+
+extensions:
+  health_check:
+    endpoint: ${OTEL_HEALTHCHECK_ENDPOINT:0.0.0.0:13133}
+  pprof:
+    endpoint: ${OTEL_PPROF_ENDPOINT:0.0.0.0:1777}
+
+service:
+  extensions: [health_check, pprof]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [logging, clickhouse]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [prometheus, clickhouse]
