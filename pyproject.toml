@@ -1,0 +1,18 @@
+[project]
+name = "op-observe"
+version = "0.1.0"
+description = "Core orchestrator for OP-Observe observability and security platform"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.4",
+]
+
+[project.scripts]
+opobserve = "op_observe.cli:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
