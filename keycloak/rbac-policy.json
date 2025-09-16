@@ -1,0 +1,26 @@
+{
+  "$schema": "https://op-observe.example.com/schemas/keycloak-rbac-policy.json",
+  "realm": "op-observe",
+  "roles": [
+    {
+      "name": "op-observe-service",
+      "description": "Allows OP-Observe services to access Vault and observability APIs",
+      "composite": false
+    },
+    {
+      "name": "op-observe-admin",
+      "description": "Administrative access to OP-Observe control plane",
+      "composite": false
+    }
+  ],
+  "groups": [
+    {
+      "name": "op-observe-operators",
+      "roles": ["op-observe-service"]
+    },
+    {
+      "name": "op-observe-admins",
+      "roles": ["op-observe-service", "op-observe-admin"]
+    }
+  ]
+}
