@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentic-radar"
+version = "0.1.0"
+description = "Agentic radar CLI for scanning agentic systems and packaging evidence."
+readme = "README.md"
+authors = [{name = "OP Observe", email = "dev@opobserve.local"}]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[project.scripts]
+agentic-radar = "agentic_radar.cli:main"
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+pythonpath = ["."]
