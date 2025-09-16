@@ -1,0 +1,109 @@
+[metadata]
+project = "OP-Observe"
+owner = "Agentic Observability Team"
+environment = "on-prem"
+default_branch = "main"
+report_contact = "security@opobserve.local"
+owasp_mapping_version = "2024.1"
+policy_hash = "radar-policy-2024.08"
+
+[agents.rag_orchestrator]
+description = "LangGraph orchestrator driving retrieval and tool execution."
+tools = ["vector_search", "llm_responder"]
+mcp_servers = ["inventory_control"]
+
+[agents.guardian_agent]
+description = "Oversight agent verifying guardrail outcomes and MCP integrity."
+tools = ["policy_audit"]
+mcp_servers = []
+
+[tools.vector_search]
+version = "2.3.1"
+source = "Internal Service"
+permissions = ["inventory.read"]
+owasp_llm = ["LLM02", "LLM06"]
+owasp_agentic = ["AA04"]
+notes = "Requires signed intents for stock updates."
+
+[tools.llm_responder]
+version = "0.8.5"
+source = "vLLM"
+permissions = ["generate"]
+owasp_llm = ["LLM01", "LLM06"]
+owasp_agentic = ["AA03"]
+notes = "Backed by guarded vLLM deployment."
+
+[tools.policy_audit]
+version = "1.1.0"
+source = "Guardrails"
+permissions = ["validate"]
+owasp_llm = ["LLM03"]
+owasp_agentic = ["AA02"]
+notes = "LLM-Critic configuration."
+
+[mcp_servers.inventory_control]
+endpoint = "mcp://inventory-control.local"
+auth_mode = "mTLS"
+capabilities = ["listInventory", "updateThresholds"]
+notes = "Requires service mesh certificate pinning."
+
+[vulnerabilities]
+policy = "block-on-high"
+[[vulnerabilities.entries]]
+component = "langchain"
+version = "0.1.17"
+cve = "CVE-2023-1234"
+severity = "HIGH"
+fix_version = "0.1.18"
+owasp_llm = ["LLM02"]
+owasp_agentic = ["AA04"]
+notes = "Upgrade to patch tool invocation bypass."
+
+[[vulnerabilities.entries]]
+component = "uvicorn"
+version = "0.23.0"
+cve = "CVE-2023-4009"
+severity = "MEDIUM"
+fix_version = "0.23.2"
+owasp_llm = ["LLM06"]
+owasp_agentic = ["AA08"]
+notes = "Update container image to latest patch release."
+
+[guards]
+policy_hash = "radar-policy-2024.08"
+[[guards.events]]
+name = "PII Detection"
+severity = "S1"
+count = 2
+
+[[guards.events]]
+name = "Tool Misuse"
+severity = "S0"
+count = 0
+
+[guards.slo]
+s0_budget = 0.1
+latest_s0 = 0.0
+latest_s1 = 0.2
+
+[evals]
+[[evals.metrics]]
+name = "LLM-Critic: Order Accuracy"
+baseline = 0.87
+current = 0.91
+trend = "up"
+
+[[evals.metrics]]
+name = "TruLens: Groundedness"
+baseline = 0.79
+current = 0.76
+trend = "down"
+
+[evidence]
+[[evidence.links]]
+label = "Phoenix Trace: order_rag_flow"
+url = "https://phoenix.local/trace/1234"
+
+[[evidence.links]]
+label = "Grafana Dashboard: OWASP Trends"
+url = "https://grafana.local/d/owasp-trends"

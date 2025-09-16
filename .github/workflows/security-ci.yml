@@ -1,0 +1,83 @@
+name: Security Radar CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  security-suite:
+    name: Radar Scan, Vulnerability Audit & Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Generate radar findings
+        run: |
+          python scripts/run_radar_scan.py \
+            --config config/security_targets.toml \
+            --output reports/radar-findings.json
+
+      - name: Run vulnerability audit
+        run: |
+          python scripts/run_vulnerability_audit.py \
+            --config config/security_targets.toml \
+            --output reports/dependency-vulnerabilities.json
+
+      - name: Build security artifacts
+        run: |
+          python scripts/build_security_artifacts.py \
+            --config config/security_targets.toml \
+            --radar reports/radar-findings.json \
+            --vulnerabilities reports/dependency-vulnerabilities.json \
+            --html reports/security-report.html \
+            --json reports/security-report.json \
+            --evidence reports/security-evidence.zip \
+            --summary reports/security-summary.md
+
+      - name: Publish report summary
+        run: cat reports/security-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run tests
+        run: pytest
+
+      - name: Upload security report (HTML)
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report-html
+          path: reports/security-report.html
+          retention-days: 14
+
+      - name: Upload security report (JSON)
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report-json
+          path: reports/security-report.json
+          retention-days: 14
+
+      - name: Upload evidence bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-evidence
+          path: reports/security-evidence.zip
+          retention-days: 30
