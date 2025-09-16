@@ -1,0 +1,11 @@
+{
+  "llm_critic": {
+    "min_score": 0.6,
+    "fallback_response": "Unable to verify answer against retrieved evidence.",
+    "require_context_overlap": true
+  },
+  "evals": {
+    "recall_floor": 0.5,
+    "precision_floor": 0.5
+  }
+}
