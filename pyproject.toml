@@ -1,0 +1,9 @@
+[project]
+name = "op-observe"
+version = "0.1.0"
+description = "Demo orchestration harness for integration testing"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+addopts = "-q"
