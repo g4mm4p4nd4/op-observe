@@ -1,0 +1,148 @@
+{
+  "scheme": "OWASP-Agentic",
+  "version": "2024.1",
+  "published": "2024-05-20",
+  "source": "OWASP Agentic AI Security Top 10 (draft)",
+  "categories": [
+    {
+      "id": "AA01",
+      "name": "Unsafe Goal Alignment",
+      "description": "Agent pursues objectives that diverge from policy or user intent.",
+      "matchers": {
+        "tags": ["goal_drift", "misaligned_objective", "unchecked_planner"],
+        "detectors": ["planner_policy_diff", "goal_drift_monitor"]
+      },
+      "mitigations": [
+        "Constrain planning policies and require human approval for goal changes.",
+        "Continuously evaluate goal alignment using automated checks or critics.",
+        "Log planner rationale for audit and debugging."
+      ]
+    },
+    {
+      "id": "AA02",
+      "name": "Toolchain Abuse",
+      "description": "Agent orchestrates tools in a way that causes harm or violates policy.",
+      "matchers": {
+        "tags": ["tool_abuse", "dangerous_chain", "unsafe_tool_combo"],
+        "detectors": ["tool_abuse_probe", "chain_risk_review"]
+      },
+      "mitigations": [
+        "Define explicit allow- and deny-lists for tool sequences.",
+        "Add runtime guardrails to intercept risky tool orchestrations.",
+        "Simulate agent plans under adversarial conditions prior to release."
+      ]
+    },
+    {
+      "id": "AA03",
+      "name": "Environment Escape",
+      "description": "Agent bypasses sandbox boundaries or executes commands on unintended systems.",
+      "matchers": {
+        "tags": ["sandbox_escape", "unauthorized_command", "runtime_breakout"],
+        "detectors": ["sandbox_monitor", "command_policy_violation"]
+      },
+      "mitigations": [
+        "Isolate execution environments with strict OS-level sandboxing.",
+        "Audit command logs and alert on privileged operations.",
+        "Disable shell/tool access by default unless explicitly required."
+      ]
+    },
+    {
+      "id": "AA04",
+      "name": "Sensitive Data Exfiltration",
+      "description": "Agent actions extract or leak confidential data through tools or channels.",
+      "matchers": {
+        "tags": ["agent_data_exfil", "sensitive_tool_output", "mcp_data_leak"],
+        "detectors": ["data_loss_monitor", "mcp_dlp_check"]
+      },
+      "mitigations": [
+        "Enforce data loss prevention controls on all agent interfaces.",
+        "Limit which connectors can handle sensitive data sets.",
+        "Record evidence bundles for all high-risk tool invocations."
+      ]
+    },
+    {
+      "id": "AA05",
+      "name": "Identity & Access Misuse",
+      "description": "Agent or tool uses credentials or permissions inappropriately.",
+      "matchers": {
+        "tags": ["credential_misuse", "privilege_escalation", "token_scope_gap"],
+        "detectors": ["iam_scope_checker", "token_leak_probe"]
+      },
+      "mitigations": [
+        "Issue short-lived credentials scoped to each agent task.",
+        "Rotate secrets and require mutual TLS for service calls.",
+        "Monitor for abnormal access patterns across tenants."
+      ]
+    },
+    {
+      "id": "AA06",
+      "name": "Supply Chain Exposure",
+      "description": "Agent integrates MCP servers or packages with unresolved vulnerabilities.",
+      "matchers": {
+        "tags": ["mcp_vulnerability", "integration_trust_gap", "unverified_dependency"],
+        "detectors": ["mcp_security_review", "integration_sbom_scan"]
+      },
+      "mitigations": [
+        "Perform security reviews on MCP servers before granting access.",
+        "Version-lock connectors and check advisories before upgrade.",
+        "Track dependency attestations and provenance."
+      ]
+    },
+    {
+      "id": "AA07",
+      "name": "Observation & Logging Gaps",
+      "description": "Insufficient telemetry prevents detection or investigation of agent behavior.",
+      "matchers": {
+        "tags": ["logging_gap", "missing_trace", "telemetry_blindspot"],
+        "detectors": ["otel_coverage_gap", "trace_drop_monitor"]
+      },
+      "mitigations": [
+        "Instrument all agent steps and tool calls with OpenTelemetry spans.",
+        "Alert on trace drop rates and gaps in guardrail coverage.",
+        "Retain security evidence bundles for regulated workloads."
+      ]
+    },
+    {
+      "id": "AA08",
+      "name": "Human Oversight Failure",
+      "description": "Critical agent actions proceed without required review or approvals.",
+      "matchers": {
+        "tags": ["no_human_in_loop", "approval_bypass", "unsafe_autonomy"],
+        "detectors": ["approval_workflow_gap", "autonomy_threshold_breach"]
+      },
+      "mitigations": [
+        "Enforce step-up approvals for destructive or high-impact actions.",
+        "Provide operators dashboards summarizing agent decisions and context.",
+        "Simulate oversight workflows during incident response drills."
+      ]
+    },
+    {
+      "id": "AA09",
+      "name": "Evaluation & Guardrail Drift",
+      "description": "Safety checks or evals lose effectiveness over time without monitoring.",
+      "matchers": {
+        "tags": ["guardrail_drift", "eval_regression", "policy_gap"],
+        "detectors": ["guardrail_monitor", "eval_regression_test"]
+      },
+      "mitigations": [
+        "Schedule recurring evals with representative workloads.",
+        "Fail CI when guardrail coverage decreases or regressions appear.",
+        "Version guardrail policies and document changes."
+      ]
+    },
+    {
+      "id": "AA10",
+      "name": "Incident Response Readiness",
+      "description": "Lack of playbooks or automation hinders response to agent failures.",
+      "matchers": {
+        "tags": ["ir_gap", "missing_playbook", "response_delay"],
+        "detectors": ["ir_drill_failure", "playbook_coverage_gap"]
+      },
+      "mitigations": [
+        "Develop and rehearse agent-specific incident playbooks.",
+        "Automate containment actions such as disabling risky tools.",
+        "Capture post-incident learnings and feed them into policy updates."
+      ]
+    }
+  ]
+}

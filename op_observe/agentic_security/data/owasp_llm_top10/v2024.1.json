@@ -1,0 +1,148 @@
+{
+  "scheme": "OWASP-LLM",
+  "version": "2024.1",
+  "published": "2024-04-24",
+  "source": "OWASP Top 10 for LLM Applications 2024",
+  "categories": [
+    {
+      "id": "LLM01",
+      "name": "Prompt Injection",
+      "description": "Attacker controlled input alters model instructions or reveals hidden prompts.",
+      "matchers": {
+        "tags": ["prompt_injection", "jailbreak", "untrusted_input"],
+        "detectors": ["prompt_injection_scanner", "jailbreak_probe"]
+      },
+      "mitigations": [
+        "Apply strict input validation and context isolation for prompts.",
+        "Use content filters or guard models to screen user supplied inputs.",
+        "Segment system prompts and prevent runtime editing."
+      ]
+    },
+    {
+      "id": "LLM02",
+      "name": "Insecure Output Handling",
+      "description": "Model output consumed without validation triggers downstream harm.",
+      "matchers": {
+        "tags": ["output_not_sanitized", "unsafe_rendering", "tool_output_trust"],
+        "detectors": ["output_validation_gap", "rendering_sink_audit"]
+      },
+      "mitigations": [
+        "Treat LLM responses as untrusted and sanitize before execution or rendering.",
+        "Apply schema validation and enforce allow-lists for tool calls.",
+        "Log and review outputs used in automated workflows."
+      ]
+    },
+    {
+      "id": "LLM03",
+      "name": "Training Data Poisoning",
+      "description": "Compromised training or fine-tuning data introduces malicious behavior.",
+      "matchers": {
+        "tags": ["training_data_untrusted", "dataset_poisoning", "weak_dataset_governance"],
+        "detectors": ["dataset_integrity_scanner"]
+      },
+      "mitigations": [
+        "Validate provenance and integrity of all training and fine-tuning datasets.",
+        "Use differential validation/evals to detect drift or malicious patterns.",
+        "Restrict who can upload or modify datasets."
+      ]
+    },
+    {
+      "id": "LLM04",
+      "name": "Model Denial of Service",
+      "description": "Excessive or crafted requests degrade model availability or latency.",
+      "matchers": {
+        "tags": ["resource_exhaustion", "rate_limit_bypass", "deep_chain_execution"],
+        "detectors": ["dos_simulation", "load_anomaly"]
+      },
+      "mitigations": [
+        "Rate limit user requests and enforce budget policies for tool chains.",
+        "Detect and throttle abnormal agent loops or recursion.",
+        "Provision autoscaling and circuit breakers for critical paths."
+      ]
+    },
+    {
+      "id": "LLM05",
+      "name": "Supply Chain Vulnerabilities",
+      "description": "Dependencies or plugins with known vulnerabilities compromise the system.",
+      "matchers": {
+        "tags": ["dependency_cve", "package_outdated", "tool_vulnerability"],
+        "detectors": ["osv_scanner", "pip_audit", "sbom_vuln_mapper"]
+      },
+      "mitigations": [
+        "Continuously scan dependencies and enforce patch SLAs.",
+        "Pin plugin and tool versions with verified checksums.",
+        "Review third-party integration permissions before deployment."
+      ]
+    },
+    {
+      "id": "LLM06",
+      "name": "Sensitive Information Disclosure",
+      "description": "Model or prompt leaks secrets, personal data, or regulated records.",
+      "matchers": {
+        "tags": ["secret_leak", "pii_exposure", "prompt_leakage"],
+        "detectors": ["pii_scanner", "secret_scanner", "prompt_leak_check"]
+      },
+      "mitigations": [
+        "Mask or redact sensitive data prior to prompt injection.",
+        "Enable output classifiers for sensitive topics and secrets.",
+        "Implement data retention limits and secure storage."
+      ]
+    },
+    {
+      "id": "LLM07",
+      "name": "Insecure Plugin Design",
+      "description": "Plugins or tools expose insecure interfaces leveraged by the model.",
+      "matchers": {
+        "tags": ["plugin_insecure", "tool_auth_missing", "callback_trust_gap"],
+        "detectors": ["plugin_contract_audit", "tool_surface_review"]
+      },
+      "mitigations": [
+        "Harden plugin authentication and authorization contracts.",
+        "Restrict plugin capabilities to least privilege and sandbox IO.",
+        "Review plugin schemas for injection or escalation paths."
+      ]
+    },
+    {
+      "id": "LLM08",
+      "name": "Excessive Agency",
+      "description": "Agent granted overly broad permissions to act without guardrails.",
+      "matchers": {
+        "tags": ["tool_overprivileged", "autonomous_chain", "unsafe_action_radius"],
+        "detectors": ["permission_diff", "agency_scope_scan"]
+      },
+      "mitigations": [
+        "Limit autonomous actions to audited, low-impact operations.",
+        "Add confirmation and human-in-the-loop checkpoints.",
+        "Continuously evaluate agent goals versus allowed policies."
+      ]
+    },
+    {
+      "id": "LLM09",
+      "name": "Overreliance",
+      "description": "System or operators trust LLM output without adequate verification.",
+      "matchers": {
+        "tags": ["lack_of_grounding", "no_feedback_loop", "hallucination_risk"],
+        "detectors": ["eval_coverage_gap", "hallucination_probe"]
+      },
+      "mitigations": [
+        "Introduce automated cross-checks or retrieval augmentation for facts.",
+        "Track eval coverage and fail open when guardrails degrade.",
+        "Educate operators on residual risk and verification steps."
+      ]
+    },
+    {
+      "id": "LLM10",
+      "name": "Model Theft",
+      "description": "Attackers steal model weights, prompts, or intellectual property.",
+      "matchers": {
+        "tags": ["model_exfiltration", "prompt_dump", "artifact_leak"],
+        "detectors": ["model_exfiltration_monitor", "artifact_access_anomaly"]
+      },
+      "mitigations": [
+        "Encrypt and access-control model artifacts and prompt stores.",
+        "Monitor for anomalous downloads or mass prompt access.",
+        "Apply watermarking and canary prompts to detect leaks."
+      ]
+    }
+  ]
+}
