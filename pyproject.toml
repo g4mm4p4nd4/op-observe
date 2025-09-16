@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=67"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "op-observe"
+version = "0.1.0"
+description = "OP-Observe retrieval pipeline utilities"
+authors = [
+  { name = "OP Observe" }
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+onnx = ["onnxruntime"]
+vllm = ["requests"]
+qdrant = ["qdrant-client>=1.7.0"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra"
+testpaths = [
+  "tests"
+]
