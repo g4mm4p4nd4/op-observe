@@ -1,0 +1,87 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: ${OTEL_RECEIVER_OTLP_GRPC_ENDPOINT:0.0.0.0:4317}
+      http:
+        endpoint: ${OTEL_RECEIVER_OTLP_HTTP_ENDPOINT:0.0.0.0:4318}
+
+processors:
+  memory_limiter:
+    check_interval: 2s
+    limit_mib: ${OTEL_MEMORY_LIMIT_MIB:400}
+    spike_limit_mib: ${OTEL_MEMORY_SPIKE_LIMIT_MIB:100}
+  batch:
+    send_batch_size: ${OTEL_BATCH_SIZE:8192}
+    timeout: ${OTEL_BATCH_TIMEOUT:5s}
+  resource:
+    attributes:
+      - action: upsert
+        key: deployment.environment
+        value: ${OTEL_RESOURCE_ENVIRONMENT:local}
+  attributes/logs:
+    actions:
+      - action: upsert
+        key: loki.tenant
+        value: ${LOKI_TENANT_ID:default}
+
+exporters:
+  logging/debug:
+    verbosity: ${OTEL_DEBUG_VERBOSITY:normal}
+  prometheus:
+    endpoint: ${PROMETHEUS_EXPORTER_ENDPOINT:0.0.0.0:8889}
+    namespace: ${PROMETHEUS_EXPORTER_NAMESPACE:opobserve}
+  prometheusremotewrite:
+    endpoint: ${PROMETHEUS_REMOTE_WRITE_ENDPOINT:http://prometheus:9090/api/v1/write}
+    headers:
+      Authorization: ${PROMETHEUS_REMOTE_WRITE_AUTH:}
+      X-Scope-OrgID: ${PROMETHEUS_TENANT_ID:default}
+    tls:
+      insecure: ${PROMETHEUS_REMOTE_WRITE_INSECURE:true}
+  clickhouse:
+    endpoint: ${CLICKHOUSE_ENDPOINT:http://clickhouse:8123}
+    database: ${CLICKHOUSE_DATABASE:otel}
+    username: ${CLICKHOUSE_USERNAME:default}
+    password: ${CLICKHOUSE_PASSWORD:}
+    logs_table_name: ${CLICKHOUSE_LOGS_TABLE:otel_logs}
+    traces_table_name: ${CLICKHOUSE_TRACES_TABLE:otel_traces}
+    metrics_table_name: ${CLICKHOUSE_METRICS_TABLE:otel_metrics}
+    ttl_days: ${CLICKHOUSE_TTL_DAYS:3}
+  otlphttp/phoenix:
+    endpoint: ${PHOENIX_OTLP_ENDPOINT:http://phoenix:6006}
+    headers:
+      x-api-key: ${PHOENIX_API_KEY:}
+    tls:
+      insecure: ${PHOENIX_INSECURE:true}
+  loki:
+    endpoint: ${LOKI_ENDPOINT:http://loki:3100/loki/api/v1/push}
+    tenant_id: ${LOKI_TENANT_ID:default}
+    headers:
+      X-Scope-OrgID: ${LOKI_TENANT_ID:default}
+    tls:
+      insecure: ${LOKI_INSECURE:true}
+
+extensions:
+  health_check:
+    endpoint: ${OTEL_HEALTHCHECK_ENDPOINT:0.0.0.0:13133}
+  pprof:
+    endpoint: ${OTEL_PPROF_ENDPOINT:0.0.0.0:1777}
+
+service:
+  telemetry:
+    metrics:
+      address: ${OTEL_INTERNAL_METRICS_ENDPOINT:0.0.0.0:8888}
+  extensions: [pprof, health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [otlphttp/phoenix, clickhouse, logging/debug]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [prometheus, prometheusremotewrite, clickhouse, logging/debug]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, attributes/logs, batch]
+      exporters: [loki, clickhouse, logging/debug]

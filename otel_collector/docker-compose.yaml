@@ -1,0 +1,73 @@
+version: '3.9'
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.95.0
+    container_name: otel-collector
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./config/collector.yaml:/etc/otelcol/config.yaml:ro
+    environment:
+      OTEL_RESOURCE_ENVIRONMENT: local
+      PROMETHEUS_EXPORTER_ENDPOINT: 0.0.0.0:8889
+      PROMETHEUS_REMOTE_WRITE_ENDPOINT: http://prometheus:9090/api/v1/write
+      CLICKHOUSE_ENDPOINT: http://clickhouse:8123
+      CLICKHOUSE_DATABASE: otel
+      CLICKHOUSE_USERNAME: default
+      CLICKHOUSE_PASSWORD: ''
+      PHOENIX_OTLP_ENDPOINT: http://phoenix:6006
+      LOKI_ENDPOINT: http://loki:3100/loki/api/v1/push
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8888:8888"
+      - "8889:8889"
+      - "13133:13133"
+    depends_on:
+      - clickhouse
+      - prometheus
+      - phoenix
+      - loki
+
+  prometheus:
+    image: prom/prometheus:v2.48.1
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.8
+    container_name: clickhouse
+    environment:
+      CLICKHOUSE_DB: otel
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ''
+    ports:
+      - "8123:8123"
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    container_name: phoenix
+    ports:
+      - "6006:6006"
+
+  loki:
+    image: grafana/loki:2.9.2
+    container_name: loki
+    command: ["-config.file=/etc/loki/config.yaml"]
+    volumes:
+      - ./loki/config.yaml:/etc/loki/config.yaml:ro
+    ports:
+      - "3100:3100"
+
+networks:
+  default:
+    name: opobserve-otel
