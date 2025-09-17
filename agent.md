@@ -40,4 +40,15 @@ This core agent orchestrates the various sub‑agents defined in the repository.
 ## Acceptance Criteria
 - Developers can follow this guide to understand when and how to invoke each sub‑agent.
 - CI pipelines referencing this core agent will run the appropriate sub‑agents in sequence and fail on unresolved S0/S1 security issues or missing telemetry.
-- Integrated system demonstrations (using golden templates) show observability instrumentation, security scanning, retrieval operations, telemetry export, and evidence packaging working together.
+- Integrated system demonstrations (using golden templates) show observability instrumentation, security scanning, retrieval operations, telemetry export, and evidence packaging working together.n
+## Baseline Unification Plan
+
+- **Purpose:** Prevent merge conflicts across tasks by establishing shared files before feature development.
+- **Unified `.gitignore`:** Consolidate ignore patterns required by all modules (e.g., `env/`, `__pycache__/`, `*.pyc`, `*.log`, build output, etc.) and add explanatory comments. Modules should not append to this file.
+- **Central `op_observe/__init__.py`:** Export all top‑level subpackages (`["observability", "security", "retrieval", "telemetry", "enablement", "core"]`) and optionally use lazy imports to avoid heavy dependencies. Feature tasks must not modify this file.
+- **Shared `tests/conftest.py`:** Contain a common docstring, `from __future__ import annotations`, and shared fixtures. Module‑specific fixtures should live in their own `tests/<module>/conftest.py` files.
+- **Implementation:** Create a dedicated Codex task (e.g., "Unify baseline files") that introduces these files on the main branch. Merge this baseline before any other feature branches.
+- **Guidance for new tasks:** When adding new modules or features, avoid editing these baseline files. If additional ignore patterns or exports are needed, document them in module-specific locations or provide instructions in documentation rather than modifying the root files.
+
+This plan should be documented here and executed early in the development lifecycle to minimize conflict resolution overhead.
+rated system demonstrations (using golden templates) show observability instrumentation, security scanning, retrieval operations, telemetry export, and evidence packaging working together.
