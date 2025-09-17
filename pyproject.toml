@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "op-observe"
+version = "0.1.0"
+description = "Agentic security detectors for OP-Observe"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+python_files = ["test_*.py"]
+addopts = "-q"
