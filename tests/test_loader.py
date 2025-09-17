@@ -1,4 +1,8 @@
 from datetime import date
+from pathlib import Path
+from runpy import run_path
+
+run_path(Path(__file__).resolve().with_name("_baseline_imports.py"))
 
 from op_observe.agentic_security.loader import (
     get_agentic_ai_mapping,
