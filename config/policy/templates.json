@@ -1,0 +1,48 @@
+{
+  "templates": [
+    {
+      "apiVersion": "templates.gatekeeper.sh/v1beta1",
+      "kind": "ConstraintTemplate",
+      "metadata": {
+        "name": "opobservemusthaveapproval"
+      },
+      "spec": {
+        "crd": {
+          "spec": {
+            "names": {
+              "kind": "OpObserveMustHaveApproval"
+            }
+          }
+        },
+        "targets": [
+          {
+            "target": "admission.k8s.gatekeeper.sh",
+            "rego": "package opobserve.musthaveapproval"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "templates.gatekeeper.sh/v1beta1",
+      "kind": "ConstraintTemplate",
+      "metadata": {
+        "name": "opobserveallowedroles"
+      },
+      "spec": {
+        "crd": {
+          "spec": {
+            "names": {
+              "kind": "OpObserveAllowedRoles"
+            }
+          }
+        },
+        "targets": [
+          {
+            "target": "admission.k8s.gatekeeper.sh",
+            "rego": "package opobserve.allowedroles"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "roles": [
+    {
+      "name": "platform-admin",
+      "permissions": [
+        "secrets:read",
+        "secrets:write",
+        "policies:approve"
+      ]
+    },
+    {
+      "name": "security-analyst",
+      "permissions": [
+        "secrets:read",
+        "policies:approve"
+      ]
+    },
+    {
+      "name": "observer",
+      "permissions": [
+        "secrets:read"
+      ]
+    }
+  ]
+}

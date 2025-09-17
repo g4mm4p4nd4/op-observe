@@ -1,0 +1,35 @@
+{
+  "bindings": [
+    {
+      "role": "platform-admin",
+      "resources": [
+        "vault:kv/app",
+        "vault:kv/global"
+      ],
+      "actions": [
+        "secrets:read",
+        "secrets:write",
+        "policies:approve"
+      ]
+    },
+    {
+      "role": "security-analyst",
+      "resources": [
+        "vault:kv/app"
+      ],
+      "actions": [
+        "secrets:read",
+        "policies:approve"
+      ]
+    },
+    {
+      "role": "observer",
+      "resources": [
+        "vault:kv/app"
+      ],
+      "actions": [
+        "secrets:read"
+      ]
+    }
+  ]
+}
