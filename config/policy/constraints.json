@@ -1,0 +1,54 @@
+{
+  "constraints": [
+    {
+      "apiVersion": "constraints.gatekeeper.sh/v1beta1",
+      "kind": "OpObserveMustHaveApproval",
+      "metadata": {
+        "name": "require-security-approval"
+      },
+      "spec": {
+        "match": {
+          "kinds": {
+            "kinds": [
+              "Secret"
+            ]
+          },
+          "namespaces": [
+            "op-observe"
+          ]
+        },
+        "parameters": {
+          "requireGatekeeper": true
+        }
+      }
+    },
+    {
+      "apiVersion": "constraints.gatekeeper.sh/v1beta1",
+      "kind": "OpObserveAllowedRoles",
+      "metadata": {
+        "name": "restrict-secret-access"
+      },
+      "spec": {
+        "match": {
+          "kinds": {
+            "kinds": [
+              "Secret"
+            ]
+          },
+          "namespaces": [
+            "op-observe"
+          ]
+        },
+        "parameters": {
+          "allowedRoles": [
+            "platform-admin",
+            "security-analyst"
+          ],
+          "prohibitedAnnotations": [
+            "security/opobserve-deny"
+          ]
+        }
+      }
+    }
+  ]
+}
