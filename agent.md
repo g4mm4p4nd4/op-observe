@@ -38,10 +38,10 @@ This core agent orchestrates the various sub‑agents defined in the repository.
 - Continuously update documentation and diagrams to reflect the evolving architecture.
 
 ## Acceptance Criteria
-- Developers can follow this guide to understand when and how to invoke each sub‑agent.
-- CI pipelines referencing this core agent will run the appropriate sub‑agents in sequence and fail on unresolved S0/S1 security issues or missing telemetry.
-- Integrated system demonstrations (using golden templates) show observability instrumentation, security scanning, retrieval operations, telemetry export, and evidence packaging working together.n
-## Baseline Unification Plan
+- Developers can follow this guide to understand when and how to invoke each sub-agent.
+- CI pipelines referencing this core agent will run the appropriate sub-agents in sequence and fail on unresolved S0/S1 security issues or missing telemetry.
+- Integrated system demonstrations (using golden templates) show observability instrumentation, security scanning, retrieval operations, telemetry export, and evidence packaging working together.
+-## Baseline Unification Plan
 
 - **Purpose:** Prevent merge conflicts across tasks by establishing shared files before feature development.
 - **Unified `.gitignore`:** Consolidate ignore patterns required by all modules (e.g., `env/`, `__pycache__/`, `*.pyc`, `*.log`, build output, etc.) and add explanatory comments. Modules should not append to this file.
