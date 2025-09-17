@@ -1,2 +1,49 @@
+# Baseline ignore rules for OP-Observe.
+# This file is part of the repository-wide merge-conflict prevention baseline.
+# Do not modify it in feature branches; update via the baseline process only.
+
+# Virtual environments
+env/
+
+# Python cache and compiled files
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+*.so
+*.dylib
+
+# Vendored dependencies
+vendor/
+
+# Logs and runtime diagnostics
+*.log
+
+# Coverage and test outputs
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.tox/
+.nox/
+.mypy_cache/
+.pyre/
+.ruff_cache/
+
+# Editor and IDE settings
+*.swp
+*.swo
+.idea/
+.vscode/
+.DS_Store
+
+# Local data artifacts
+*.sqlite3

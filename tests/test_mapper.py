@@ -1,3 +1,8 @@
+from pathlib import Path
+from runpy import run_path
+
+run_path(Path(__file__).resolve().with_name("_baseline_imports.py"))
+
 from op_observe.agentic_security import (
     generate_mitigation_checklist,
     map_finding_to_tables,
