@@ -1,0 +1,23 @@
+{
+  "nodes": [
+    {"id": "1", "name": "Orchestrator Agent", "type": "n8n-nodes-base.workflow"},
+    {"id": "2", "name": "HTTP Tool", "type": "n8n-nodes-base.httpRequest", "parameters": {"mcp": "http://n8n.local:3000/mcp"}},
+    {"id": "3", "name": "Vector Retriever", "type": "n8n-nodes-base.vectorStore"}
+  ],
+  "connections": {
+    "Orchestrator Agent": {
+      "main": [
+        [
+          {"node": "HTTP Tool", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "HTTP Tool": {
+      "main": [
+        [
+          {"node": "Vector Retriever", "type": "main", "index": 0}
+        ]
+      ]
+    }
+  }
+}
